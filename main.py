@@ -1,9 +1,12 @@
 # main.py
+import os
 import tkinter as tk
 from tkinter import PhotoImage, scrolledtext
 import threading
 from crawler import run_crawler
 import time
+import pystray
+from PIL import Image
 
 # Flags
 is_running = False
@@ -14,8 +17,42 @@ start_btn = None
 pause_btn = None
 resume_btn = None
 stop_btn = None
+hide_var = None
+def hide_to_tray():
+    root.withdraw()
 
+    try:
+        img = Image.open("templar.png")
+    except:
+        img = Image.new("RGB", (64, 64), "black")
 
+    menu = pystray.Menu(
+    pystray.MenuItem("Show", lambda: show_window()),
+    pystray.MenuItem("Exit", lambda: exit_app())
+)
+    icon = pystray.Icon(
+    "Templar",
+    img,    
+    "Templar Log Monitor",
+    menu,
+    on_clicked=lambda icon, item: show_window()
+)  
+    root.icon_handler = icon
+    icon.run()
+def exit_app():
+    if hasattr(root, "icon_handler"):
+        root.icon_handler.stop()
+    root.destroy()
+    os._exit(0)
+
+def show_window():
+    root.deiconify()
+    hide_var.set(False)
+    if hasattr(root, "icon_handler"):
+        root.icon_handler.stop()
+def on_hide_toggle():
+    if hide_var.get():   # Checkbox được tick
+        threading.Thread(target=hide_to_tray, daemon=True).start()
 def should_run():
     return is_running
 
@@ -115,7 +152,7 @@ def stop_clicked(text_area):
 
 def main():
     global start_btn, pause_btn, resume_btn, stop_btn
-
+    global root
     root = tk.Tk()
     root.title("Templar Log Monitor")
     root.geometry("1050x650")
@@ -154,7 +191,7 @@ def main():
     # ==================================================================
     input_frame = tk.Frame(root)
     input_frame.pack(pady=5)
-
+   
     tk.Label(input_frame, text="UID:", font=("Arial", 12)).grid(row=0, column=0, padx=5)
     uid_entry = tk.Entry(input_frame, width=10, font=("Arial", 12))
     uid_entry.grid(row=0, column=1, padx=5)
@@ -182,7 +219,16 @@ def main():
     stop_btn = tk.Button(button_frame, text="STOP", width=12,
                          font=("Arial", 12, "bold"),
                          command=lambda: stop_clicked(text_area))
-
+    global hide_var
+    hide_var = tk.BooleanVar(value=False)
+    hide_checkbox = tk.Checkbutton(
+        root,
+        text="Hide to tray",
+        variable=hide_var,
+        font=("Arial", 12),
+        command=on_hide_toggle
+    )
+    hide_checkbox.pack(pady=5)
     start_btn.grid(row=0, column=0, padx=10)
     pause_btn.grid(row=0, column=1, padx=10)
     resume_btn.grid(row=0, column=2, padx=10)
