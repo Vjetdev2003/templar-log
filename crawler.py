@@ -167,8 +167,8 @@ def run_crawler(uid, time_range_minutes, gui_log, should_run, paused_flag):
                     continue
 
                 # HARD RELOAD
-                if soft_refresh_count >= 10:
-                    gui_log(">>> HARD RELOAD triggered (10 soft refreshes)")
+                if soft_refresh_count >= 5:
+                    gui_log(">>> HARD RELOAD triggered (5 soft refreshes)")
                     try:
                         driver.get(url)
                         time.sleep(6)
@@ -289,7 +289,16 @@ def run_crawler(uid, time_range_minutes, gui_log, should_run, paused_flag):
                     
                 elif "Skipped UID" in msg and "gradient not found" in msg:
                     send_flag = True
-
+                elif "Skipped reducing score of UID" in msg and "due to negative zero value" in msg:
+                    send_flag = True
+                elif "No gradient received from" in msg and "Slashing moving average score" in msg: 
+                    send_flag = True
+                elif "key gradient was uploaded too late" in msg:
+                    send_flag = True
+                elif "key gradient was uploaded too early" in msg:
+                    send_flag = True
+                elif "exists but was uploaded too early" in msg:
+                    send_flag = True    
                 # Only send for target UID
                 if eval_uid and eval_uid != str(uid):
                     send_flag = False

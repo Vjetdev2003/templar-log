@@ -3,6 +3,7 @@ import tkinter as tk
 from tkinter import PhotoImage, scrolledtext
 import threading
 from crawler import run_crawler
+import time
 
 # Flags
 is_running = False
@@ -160,7 +161,7 @@ def main():
 
     tk.Label(input_frame, text="Time range (minutes):", font=("Arial", 12)).grid(row=0, column=2, padx=5)
     time_entry = tk.Entry(input_frame, width=10, font=("Arial", 12))
-    time_entry.insert(0, "10")
+    time_entry.insert(0, "5")
     time_entry.grid(row=0, column=3, padx=5)
 
     # ==================================================================
