@@ -299,6 +299,8 @@ def run_crawler(uid, time_range_minutes, gui_log, should_run, paused_flag):
                     send_flag = True
                 elif "exists but was uploaded too early" in msg:
                     send_flag = True    
+                elif "MEGA SLASH" in msg:
+                    send_flag = True
                 # Only send for target UID
                 if eval_uid and eval_uid != str(uid):
                     send_flag = False
