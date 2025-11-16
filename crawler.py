@@ -286,6 +286,9 @@ def run_crawler(uid, time_range_minutes, gui_log, should_run, paused_flag):
 
                 elif "Skipped score of UID" in msg and ("zero" in msg or "negative" in msg):
                     send_flag = True
+                    
+                elif "Skipped UID" in msg and "gradient not found" in msg:
+                    send_flag = True
 
                 # Only send for target UID
                 if eval_uid and eval_uid != str(uid):
