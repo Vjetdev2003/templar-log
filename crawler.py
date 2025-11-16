@@ -59,20 +59,6 @@ def start_driver():
 
 
 # --------------------------------------------------------
-# CHECK GRADIENT SCORE ÂM
-# --------------------------------------------------------
-def is_negative_gradient(msg):
-    m = re.search(r"Gradient Score:\s*([-+]?[0-9]*\.?[0-9]+(?:e[-+]?\d+)?)", msg)
-    if not m:
-        return False
-
-    try:
-        return float(m.group(1)) < 0
-    except:
-        return False
-
-
-# --------------------------------------------------------
 # WAIT FOR DOM READY
 # --------------------------------------------------------
 def wait_for_dom(driver, gui_log):
@@ -272,10 +258,7 @@ def run_crawler(uid, time_range_minutes, gui_log, should_run, paused_flag):
                 # ------------------ FILTER LỖI ------------------
                 send_flag = False
 
-                if is_negative_gradient(msg):
-                    send_flag = True
-
-                elif "negative eval frequency" in msg:
+                if "negative eval frequency" in msg:
                     send_flag = True
 
                 elif "avg_steps_behind=" in msg and "> max=" in msg:
@@ -300,6 +283,10 @@ def run_crawler(uid, time_range_minutes, gui_log, should_run, paused_flag):
                 elif "exists but was uploaded too early" in msg:
                     send_flag = True    
                 elif "MEGA SLASH" in msg:
+                    send_flag = True
+                elif "negative evaluations" in msg and "in last 8 windows" in msg:
+                    send_flag = True
+                elif "consecutive negative evaluations" in msg:
                     send_flag = True
                 # Only send for target UID
                 if eval_uid and eval_uid != str(uid):
