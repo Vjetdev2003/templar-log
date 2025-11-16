@@ -45,9 +45,11 @@ def gui_log(text_area, msg):
 def start_clicked(text_area, uid_entry, time_entry):
     global is_running, is_paused
 
+    # Nếu đang chạy: tắt task cũ trước
     if is_running:
-        gui_log(text_area, "❗ Already running!")
-        return
+        gui_log(text_area, ">>> Stopping previous crawler...")
+        is_running = False
+        time.sleep(0.5)  # chờ thread đóng ChromeDriver
 
     uid = uid_entry.get().strip()
     if not uid.isdigit():
@@ -64,7 +66,7 @@ def start_clicked(text_area, uid_entry, time_entry):
     is_paused = False
     highlight(start_btn, "lightgreen")
 
-    gui_log(text_area, ">>> START crawler...")
+    gui_log(text_area, f">>> START crawler for UID {uid} ...")
 
     threading.Thread(
         target=run_crawler,
